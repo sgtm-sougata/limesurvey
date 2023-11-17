@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  limesurvey-md:
+    image: mariadb
+    restart: always
+    ports:
+      - "32805:3306"
+    environment:
+      MYSQL_DATABASE: limesurvey
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: limesurvey
+      MYSQL_PASSWORD: password
+    volumes:
+      - limesurvey-db:/var/lib/mysql
+      - limesurvey-dblog:/var/log/mysql
+      - limesurvey-dbetc:/etc/mysql
+
+  limesurvey:
+    image: fjudith/limesurvey
+    restart: always
+    ports:
+      - "32705:80"
+    environment:
+      LS_DB_HOST: limesurvey-md
+      LS_DB_NAME: limesurvey
+      LS_DB_USER: limesurvey
+      LS_DB_PASS: password
+    volumes:
+      - limesurvey-upload:/var/www/html/upload
+    depends_on:
+      - limesurvey-md
+
+volumes:
+  limesurvey-db:
+  limesurvey-dblog:
+  limesurvey-dbetc:
+  limesurvey-upload:
